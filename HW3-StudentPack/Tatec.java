@@ -54,6 +54,17 @@ public class Tatec
                     .map(Tokens::new)
                     .collect(Collectors.toList());
 
+            if (tokens.stream()
+                    .map(t -> t.getTokenList()
+                            .stream()
+                            .reduce(0, Integer::sum))
+                    .filter(tokenSum -> tokenSum != CORRECT_TOTAL_TOKEN_PER_STUDENT)
+                    .collect(Collectors.toList())
+                    .size() != 0) {
+                System.err.println("At least one student used wrong number of tokens!");
+                return;
+            }
+
             Iterator<Tokens> tokensIterator = tokens.iterator();
             students.forEach(student -> student.setTokens(tokensIterator.next().getTokenList()));
         } catch (IOException e) {
