@@ -58,9 +58,7 @@ public class Tatec
                     .map(t -> t.getTokenList()
                             .stream()
                             .reduce(0, Integer::sum))
-                    .filter(tokenSum -> tokenSum != CORRECT_TOTAL_TOKEN_PER_STUDENT)
-                    .collect(Collectors.toList())
-                    .size() != 0) {
+                    .anyMatch(tokenSum -> tokenSum != CORRECT_TOTAL_TOKEN_PER_STUDENT)) {
                 System.err.println("At least one student used wrong number of tokens!");
                 return;
             }
@@ -74,6 +72,26 @@ public class Tatec
 //        courses.stream().forEach(c -> System.out.println(c.getName() + ": " + c.getCapacity()));
 //        students.stream().forEach(s -> System.out.println(s.getId() + ": " + s.getTokens()));
 //        tokens.stream().forEach(t -> System.out.println(t.getTokenList()));
+
+        // TATEC
+        List<CourseAssignment> tatecCourseAssignmentList = new ArrayList<>();
+        courses.forEach(c -> tatecCourseAssignmentList.add(new CourseAssignment(c)));
+
+        IntStream.range(0, courses.size())
+                .forEach(i -> tatecCourseAssignmentList.get(i)
+                        .setStudentList(students.stream()
+                                .filter(s -> s.getTokens().get(i) != 0)
+                                .sorted((s1, s2) -> s2.getTokens().get(i) - s1.getTokens().get(i))
+                                .limit(tatecCourseAssignmentList.get(i).getCourse().getCapacity())
+                                .collect(Collectors.toList())));
+
+//        for(CourseAssignment assignment : tatecCourseAssignmentList) {
+//            System.out.println(assignment.getCourse().getName() + ":");
+//            for (Student student : assignment.getStudentList()) {
+//                System.out.println(student.getId() + ": " + student.getTokens());
+//            }
+//            System.out.println("-----");
+//        }
     }
 
 }
