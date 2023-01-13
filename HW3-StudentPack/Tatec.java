@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -115,6 +116,39 @@ public class Tatec
 //            }
 //            System.out.println("-----");
 //        }
+        System.out.println(averageUnhappiness(students, tatecCourseAssignmentList, h));
+        System.out.println(averageUnhappiness(students, randomCourseAssignmentList, h));
     }
 
+    public static Double averageUnhappiness(List<Student> studentList, List<CourseAssignment> courseAssignmentList, Double h) {
+        return studentList.stream()
+                .mapToDouble(s -> unhappiness(s, courseAssignmentList, h))
+                .average()
+                .orElse(0.0);
+
+//        return studentList.stream()
+//                .mapToDouble(s -> IntStream.range(0, courseAssignmentList.size())
+//                        .asDoubleStream()
+//                        .map(j -> x(s, courseAssignmentList.get((int)Math.round(j)))
+//                                * (-100.0 * Math.log(1.0-(s.getTokens().get((int)Math.round(j))/100.0)) / h))
+//                        .sum())
+//                .average()
+//                .orElse(0.0);
+    }
+
+    public static Double unhappiness(Student student, List<CourseAssignment> courseAssignmentList, Double h) {
+        return IntStream.range(0, courseAssignmentList.size())
+                .asDoubleStream()
+                .map(j -> x(student, courseAssignmentList.get((int)Math.round(j)))
+                        * (-100.0 * Math.log(1.0-(student.getTokens().get((int)Math.round(j))/100.0)) / h))
+                .sum();
+    }
+
+    public static Integer x(Student student, CourseAssignment courseAssignment) {
+        if (courseAssignment.getStudentList().contains(student)) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 }
