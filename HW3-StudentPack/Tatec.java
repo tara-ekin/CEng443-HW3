@@ -2,9 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -86,6 +84,31 @@ public class Tatec
                                 .collect(Collectors.toList())));
 
 //        for(CourseAssignment assignment : tatecCourseAssignmentList) {
+//            System.out.println(assignment.getCourse().getName() + ":");
+//            for (Student student : assignment.getStudentList()) {
+//                System.out.println(student.getId() + ": " + student.getTokens());
+//            }
+//            System.out.println("-----");
+//        }
+
+        // Random Assignment
+        List<CourseAssignment> randomCourseAssignmentList = new ArrayList<>();
+        courses.forEach(c -> randomCourseAssignmentList.add(new CourseAssignment(c)));
+
+        IntStream.range(0, courses.size())
+                .forEach(i -> randomCourseAssignmentList.get(i)
+                        .setStudentList(students.stream()
+                                .filter(s -> s.getTokens().get(i) != 0)
+                                .collect(Collectors.toList())));
+
+        randomCourseAssignmentList.forEach(a -> Collections.shuffle(a.getStudentList(), new Random()));
+
+        randomCourseAssignmentList.forEach(a -> a.setStudentList(a.getStudentList()
+                .stream()
+                .limit(a.getCourse().getCapacity())
+                .collect(Collectors.toList())));
+
+//        for(CourseAssignment assignment : randomCourseAssignmentList) {
 //            System.out.println(assignment.getCourse().getName() + ":");
 //            for (Student student : assignment.getStudentList()) {
 //                System.out.println(student.getId() + ": " + student.getTokens());
