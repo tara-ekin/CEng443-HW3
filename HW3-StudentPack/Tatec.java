@@ -34,7 +34,7 @@ public class Tatec
             return;
         }
 
-        // TODO: Rest is up to you
+        // Read Input Files
         List<Course> courses;
         List<Student> students;
         List<Tokens> tokens;
@@ -65,11 +65,7 @@ public class Tatec
             throw new RuntimeException(e);
         }
 
-//        courses.stream().forEach(c -> System.out.println(c.getName() + ": " + c.getCapacity()));
-//        students.stream().forEach(s -> System.out.println(s.getId() + ": " + s.getTokens()));
-//        tokens.stream().forEach(t -> System.out.println(t.getTokenList()));
-
-        // TATEC
+        // TATEC Implementation
         List<CourseAssignment> tatecCourseAssignmentList = new ArrayList<>();
         courses.forEach(c -> tatecCourseAssignmentList.add(new CourseAssignment(c)));
 
@@ -81,13 +77,6 @@ public class Tatec
                                 .limit(tatecCourseAssignmentList.get(i).getCourse().getCapacity())
                                 .collect(Collectors.toList())));
 
-//        for(CourseAssignment assignment : tatecCourseAssignmentList) {
-//            System.out.println(assignment.getCourse().getName() + ":");
-//            for (Student student : assignment.getStudentList()) {
-//                System.out.println(student.getId() + ": " + student.getTokens());
-//            }
-//            System.out.println("-----");
-//        }
         List<String> tatecAdmittedStudents = tatecCourseAssignmentList.stream()
                 .map(courseAssignment -> courseAssignment.getCourse().getName()
                         + courseAssignment.getStudentList().stream()
@@ -111,7 +100,7 @@ public class Tatec
             throw new RuntimeException(e);
         }
 
-        // Random Assignment
+        // Random Assignment Implementation
         List<CourseAssignment> randomCourseAssignmentList = new ArrayList<>();
         courses.forEach(c -> randomCourseAssignmentList.add(new CourseAssignment(c)));
 
@@ -128,13 +117,6 @@ public class Tatec
                 .limit(a.getCourse().getCapacity())
                 .collect(Collectors.toList())));
 
-//        for(CourseAssignment assignment : randomCourseAssignmentList) {
-//            System.out.println(assignment.getCourse().getName() + ":");
-//            for (Student student : assignment.getStudentList()) {
-//                System.out.println(student.getId() + ": " + student.getTokens());
-//            }
-//            System.out.println("-----");
-//        }
         List<String> randomlyAdmittedStudents = randomCourseAssignmentList.stream()
                 .map(courseAssignment -> courseAssignment.getCourse().getName()
                         + courseAssignment.getStudentList().stream()
@@ -157,10 +139,9 @@ public class Tatec
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        System.out.println(averageUnhappiness(students, tatecCourseAssignmentList, h));
-//        System.out.println(averageUnhappiness(students, randomCourseAssignmentList, h));
     }
 
+    // Helper Methods
     public static Double averageUnhappiness(List<Student> studentList, List<CourseAssignment> courseAssignmentList, Double h) {
         return studentList.stream()
                 .mapToDouble(s -> unhappiness(s, courseAssignmentList, h))
