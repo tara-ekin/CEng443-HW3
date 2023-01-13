@@ -1,12 +1,9 @@
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Tatec
 {
@@ -97,8 +94,19 @@ public class Tatec
                         .map(student -> String.valueOf(student.getId()))
                         .collect(Collectors.joining(", ", ", ", "")))
                 .collect(Collectors.toList());
+
+        List<Double> tatecUnhappinessList = students.stream()
+                .map(student -> unhappiness(student, tatecCourseAssignmentList, h))
+                .collect(Collectors.toList());
+        tatecUnhappinessList.add(0, averageUnhappiness(tatecUnhappinessList));
+
+        List<String> tatecUnhappinessListString = tatecUnhappinessList.stream()
+                .map(Objects::toString)
+                .collect(Collectors.toList());
+
         try {
             Files.write(Paths.get(OUT_TATEC_ADMISSION), tatecAdmittedStudents);
+            Files.write(Paths.get(OUT_TATEC_UNHAPPY), tatecUnhappinessListString);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -133,8 +141,19 @@ public class Tatec
                         .map(student -> String.valueOf(student.getId()))
                         .collect(Collectors.joining(", ", ", ", "")))
                 .collect(Collectors.toList());
+
+        List<Double> randomUnhappinessList = students.stream()
+                .map(student -> unhappiness(student, randomCourseAssignmentList, h))
+                .collect(Collectors.toList());
+        randomUnhappinessList.add(0, averageUnhappiness(randomUnhappinessList));
+
+        List<String> randomUnhappinessListString = randomUnhappinessList.stream()
+                .map(Objects::toString)
+                .collect(Collectors.toList());
+
         try {
             Files.write(Paths.get(OUT_RAND_ADMISSION), randomlyAdmittedStudents);
+            Files.write(Paths.get(OUT_RAND_UNHAPPY), randomUnhappinessListString);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -147,6 +166,13 @@ public class Tatec
                 .mapToDouble(s -> unhappiness(s, courseAssignmentList, h))
                 .average()
                 .orElse(0.0);
+    }
+
+    public static Double averageUnhappiness(List<Double> unhappinessList) {
+        OptionalDouble average = unhappinessList.stream()
+                .mapToDouble(u -> u)
+                .average();
+        return average.isPresent() ? average.getAsDouble() : 0;
     }
 
     public static Double unhappiness(Student student, List<CourseAssignment> courseAssignmentList, Double h) {
