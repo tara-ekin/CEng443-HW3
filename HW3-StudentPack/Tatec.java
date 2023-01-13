@@ -91,6 +91,17 @@ public class Tatec
 //            }
 //            System.out.println("-----");
 //        }
+        List<String> tatecAdmittedStudents = tatecCourseAssignmentList.stream()
+                .map(courseAssignment -> courseAssignment.getCourse().getName()
+                        + courseAssignment.getStudentList().stream()
+                        .map(student -> String.valueOf(student.getId()))
+                        .collect(Collectors.joining(", ", ", ", "")))
+                .collect(Collectors.toList());
+        try {
+            Files.write(Paths.get(OUT_TATEC_ADMISSION), tatecAdmittedStudents);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // Random Assignment
         List<CourseAssignment> randomCourseAssignmentList = new ArrayList<>();
@@ -116,8 +127,19 @@ public class Tatec
 //            }
 //            System.out.println("-----");
 //        }
-        System.out.println(averageUnhappiness(students, tatecCourseAssignmentList, h));
-        System.out.println(averageUnhappiness(students, randomCourseAssignmentList, h));
+        List<String> randomlyAdmittedStudents = randomCourseAssignmentList.stream()
+                .map(courseAssignment -> courseAssignment.getCourse().getName()
+                        + courseAssignment.getStudentList().stream()
+                        .map(student -> String.valueOf(student.getId()))
+                        .collect(Collectors.joining(", ", ", ", "")))
+                .collect(Collectors.toList());
+        try {
+            Files.write(Paths.get(OUT_RAND_ADMISSION), randomlyAdmittedStudents);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+//        System.out.println(averageUnhappiness(students, tatecCourseAssignmentList, h));
+//        System.out.println(averageUnhappiness(students, randomCourseAssignmentList, h));
     }
 
     public static Double averageUnhappiness(List<Student> studentList, List<CourseAssignment> courseAssignmentList, Double h) {
@@ -125,15 +147,6 @@ public class Tatec
                 .mapToDouble(s -> unhappiness(s, courseAssignmentList, h))
                 .average()
                 .orElse(0.0);
-
-//        return studentList.stream()
-//                .mapToDouble(s -> IntStream.range(0, courseAssignmentList.size())
-//                        .asDoubleStream()
-//                        .map(j -> x(s, courseAssignmentList.get((int)Math.round(j)))
-//                                * (-100.0 * Math.log(1.0-(s.getTokens().get((int)Math.round(j))/100.0)) / h))
-//                        .sum())
-//                .average()
-//                .orElse(0.0);
     }
 
     public static Double unhappiness(Student student, List<CourseAssignment> courseAssignmentList, Double h) {
