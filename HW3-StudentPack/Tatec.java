@@ -69,13 +69,46 @@ public class Tatec
         List<CourseAssignment> tatecCourseAssignmentList = new ArrayList<>();
         courses.forEach(c -> tatecCourseAssignmentList.add(new CourseAssignment(c)));
 
+//        IntStream.range(0, courses.size())
+//                .forEach(i -> tatecCourseAssignmentList.get(i)
+//                        .setStudentList(students.stream()
+//                                .filter(s -> s.getTokens().get(i) != 0)
+//                                .sorted((s1, s2) -> s2.getTokens().get(i) - s1.getTokens().get(i))
+//                                .limit(tatecCourseAssignmentList.get(i).getCourse().getCapacity())
+//                                .collect(Collectors.toList())));
+
         IntStream.range(0, courses.size())
                 .forEach(i -> tatecCourseAssignmentList.get(i)
                         .setStudentList(students.stream()
                                 .filter(s -> s.getTokens().get(i) != 0)
                                 .sorted((s1, s2) -> s2.getTokens().get(i) - s1.getTokens().get(i))
-                                .limit(tatecCourseAssignmentList.get(i).getCourse().getCapacity())
                                 .collect(Collectors.toList())));
+
+        List<Integer> minimumTokenAmounts = IntStream.range(0, tatecCourseAssignmentList.size())
+                .map(i -> tatecCourseAssignmentList.get(i).getStudentList()
+                        .get(Math.min(tatecCourseAssignmentList.get(i).getCourse().getCapacity() - 1,
+                                tatecCourseAssignmentList.get(i).getStudentList().size() - 1))
+                        .getTokens()
+                        .get(i))
+                .boxed().collect(Collectors.toList());
+
+        List<List<Student>> reversedStudentLists = IntStream.range(0, tatecCourseAssignmentList.size())
+                .boxed()
+                .map(i -> reverseList(tatecCourseAssignmentList.get(i).getStudentList()))
+                        .collect(Collectors.toList());
+
+        List<Integer> newCourseCapacities = IntStream.range(0, tatecCourseAssignmentList.size())
+                .boxed()
+                .map(i -> reversedStudentLists.get(i).size() - IntStream.range(0, reversedStudentLists.get(i).size())
+                        .filter(j -> reversedStudentLists.get(i).get(j).getTokens().get(i).equals(minimumTokenAmounts.get(i)))
+                        .findFirst().orElse(tatecCourseAssignmentList.get(i).getCourse().getCapacity()))
+                .collect(Collectors.toList());
+
+        IntStream.range(0, tatecCourseAssignmentList.size())
+                        .forEach(i -> tatecCourseAssignmentList.get(i)
+                                .setStudentList(tatecCourseAssignmentList.get(i).getStudentList().stream()
+                                        .limit(newCourseCapacities.get(i))
+                                        .collect(Collectors.toList())));
 
         List<String> tatecAdmittedStudents = tatecCourseAssignmentList.stream()
                 .map(courseAssignment -> courseAssignment.getCourse().getName()
@@ -142,6 +175,12 @@ public class Tatec
     }
 
     // Helper Methods
+    public static <T> List<T> reverseList(List<T> inputList) {
+        List<T> outputList = new ArrayList<>(inputList);
+        Collections.reverse(outputList);
+        return outputList;
+    }
+
     public static Double averageUnhappiness(List<Student> studentList, List<CourseAssignment> courseAssignmentList, Double h) {
         return studentList.stream()
                 .mapToDouble(s -> unhappiness(s, courseAssignmentList, h))
