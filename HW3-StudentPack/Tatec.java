@@ -159,16 +159,17 @@ public class Tatec
     public static Double unhappiness(Student student, List<CourseAssignment> courseAssignmentList, Double h) {
         Double unhappiness = IntStream.range(0, courseAssignmentList.size())
                 .asDoubleStream()
-                .map(j -> x(student, courseAssignmentList.get((int)Math.round(j)))
-                        * (-100.0 * Math.log(1.0-(student.getTokens().get((int)Math.round(j))/100.0)) / h))
+                .map(j -> f(student, courseAssignmentList.get((int) Math.round(j)), (int) Math.round(j), h))
                 .sum();
-        if (unhappiness.equals(Double.POSITIVE_INFINITY)) {
-            unhappiness = 100.0;
-        }
-        else if (unhappiness.equals(Double.NaN)) {
-            unhappiness = 0.0;
-        }
-        return unhappiness;
+        Boolean takenAtLeastOneCourse = IntStream.range(0, courseAssignmentList.size())
+                .anyMatch(i -> x(student, courseAssignmentList.get(i)).equals(0));
+        return takenAtLeastOneCourse ? unhappiness : Math.pow(unhappiness, 2);
+    }
+
+    public static Double f(Student student, CourseAssignment courseAssignment, Integer courseOrder, Double h) {
+        Double f = x(student, courseAssignment)
+                * (-100.0 * Math.log(1.0 - (student.getTokens().get(courseOrder)/100.0)) / h);
+        return f > 100 ? 100 : (f.equals(Double.NaN) ? 0.0 : f);
     }
 
     public static Integer x(Student student, CourseAssignment courseAssignment) {
