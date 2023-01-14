@@ -114,7 +114,7 @@ public class Tatec
                 .map(courseAssignment -> courseAssignment.getCourse().getName()
                         + courseAssignment.getStudentList().stream()
                         .map(student -> String.valueOf(student.getId()))
-                        .collect(Collectors.joining(", ", ", ", "")))
+                        .collect(Collectors.joining(",", ",", "")))
                 .collect(Collectors.toList());
 
         List<Double> tatecUnhappinessList = students.stream()
@@ -154,7 +154,7 @@ public class Tatec
                 .map(courseAssignment -> courseAssignment.getCourse().getName()
                         + courseAssignment.getStudentList().stream()
                         .map(student -> String.valueOf(student.getId()))
-                        .collect(Collectors.joining(", ", ", ", "")))
+                        .collect(Collectors.joining(",", ",", "")))
                 .collect(Collectors.toList());
 
         List<Double> randomUnhappinessList = students.stream()
