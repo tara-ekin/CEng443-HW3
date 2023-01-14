@@ -13,7 +13,7 @@ public class Tatec
     private static final String OUT_RAND_UNHAPPY = "unhappyOutRANDOM.txt";
     private static final String OUT_RAND_ADMISSION = "admissionOutRANDOM.txt";
 
-    public static void main(String args[])
+    public static void main(String[] args)
     {
         if(args.length < 4)
         {
@@ -68,14 +68,6 @@ public class Tatec
         // TATEC Implementation
         List<CourseAssignment> tatecCourseAssignmentList = new ArrayList<>();
         courses.forEach(c -> tatecCourseAssignmentList.add(new CourseAssignment(c)));
-
-//        IntStream.range(0, courses.size())
-//                .forEach(i -> tatecCourseAssignmentList.get(i)
-//                        .setStudentList(students.stream()
-//                                .filter(s -> s.getTokens().get(i) != 0)
-//                                .sorted((s1, s2) -> s2.getTokens().get(i) - s1.getTokens().get(i))
-//                                .limit(tatecCourseAssignmentList.get(i).getCourse().getCapacity())
-//                                .collect(Collectors.toList())));
 
         IntStream.range(0, courses.size())
                 .forEach(i -> tatecCourseAssignmentList.get(i)
